@@ -1,0 +1,23 @@
+<template>
+    <div class="layout">
+        <navigation-bar />
+        <router-view :key="$route.fullPath"/>
+        <login-signup-form />
+        <create-blog /> 
+    </div>
+</template>
+
+<script>
+import navigationBar from "./components/navigation-bar.vue";
+import loginSignupForm from "../views/Master/login-signup-form.vue";
+import createBlog from "../views/Master/create-blog.vue";
+export default {
+    name : 'layout',
+
+    components : {
+        'navigation-bar' : navigationBar,
+        'login-signup-form' : loginSignupForm,
+        'create-blog' : createBlog
+    }
+}
+</script>

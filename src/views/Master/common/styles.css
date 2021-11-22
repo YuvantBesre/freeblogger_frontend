@@ -1,0 +1,44 @@
+@import url('../../../helpers//CSS/styles.css');
+.heading {
+    justify-content: space-between;
+    background-color: black;
+}
+
+.footer {
+    justify-content: flex-end;
+    background-color: black;
+}
+
+.footer, .heading {
+    padding: 10px;
+    height: 60px;
+}
+
+.form-body {
+    padding: 20px 10px;
+}
+
+.submit-button {
+    background-color: var(--gray-theme);
+    width: 100px;
+    height: 30px;
+    border-radius: 6px;
+}
+
+@media all and (min-width : 768px) {
+
+    .footer, .heading {
+        padding: 10px 20px;
+    }
+
+    .form-body {
+        padding: 20px 20px;
+    }
+}
+
+@media all and (min-width : 1200px) {
+
+    .submit-button {
+        height: 35px;
+    }
+}
