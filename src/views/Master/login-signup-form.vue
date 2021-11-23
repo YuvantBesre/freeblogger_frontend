@@ -13,6 +13,7 @@
 
                             <label class="white-text"> Email </label>
                             <v-text-field 
+                                :rules="[rules.required, rules.validEmail]"
                                 placeholder="E.g. abc@xyz.co.in"
                                 outlined 
                                 class="mt-1"
@@ -22,6 +23,7 @@
 
                             <label class="white-text"> Password </label>
                             <v-text-field 
+                                :rules="[rules.required]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
                                 outlined 
@@ -61,6 +63,7 @@
                         <div class="form-body">
                             <label class="white-text"> Name </label>
                             <v-text-field 
+                                :rules="[rules.required]"
                                 placeholder="E.g. Neha Kumari"
                                 outlined 
                                 class="mt-1 input"
@@ -70,6 +73,7 @@
 
                             <label class="white-text"> Email </label>
                             <v-text-field 
+                                :rules="[rules.required, rules.validEmail]"
                                 placeholder="E.g. abc@xyz.co.in"
                                 outlined 
                                 class="mt-1 input"
@@ -79,6 +83,7 @@
 
                             <label class="white-text"> Password </label>
                             <v-text-field 
+                                :rules="[rules.required, rules.validPassword]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
                                 outlined 
@@ -90,6 +95,7 @@
 
                             <label class="white-text"> Confirm Password </label>
                             <v-text-field 
+                                :rules="[rules.required, rules.validPassword]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
                                 outlined 
@@ -117,6 +123,7 @@
 import {eventBus} from '../../main';
 import API_URLS from '../../helpers/api-urls'
 import accessToken from '../../helpers/access-token';
+import rules from '../../helpers/rules'
 export default {
     name : 'loginSignupForm',
 
@@ -125,13 +132,14 @@ export default {
             dialog : false,
             showPassword : false,
             showLogin : true,
-
             userDetails : {
                 name : null,
                 email : null,
                 password : null,
                 confirmedPassword : null
-            }
+            },
+            rules : rules,
+            appliedRules : [],
         }
     },
 
@@ -193,37 +201,49 @@ export default {
 
         // LOGIN A USER
         loginUser() {
-            const successHandler = response => {
-                if(response.status === 200) {
-                    accessToken.setCredentials(response.data.token, response.data.user.name, response.data.user.email)
-                    this.closeSignupLoginForm();
-                    this.showSnackBar();
-                    this.setUserState(response.data.user.name, response.data.user.email);
+            if(this.$refs.loginFormRef.validate()) {
+                const successHandler = response => {
+                    if(response.status === 200) {
+                        accessToken.setCredentials(response.data.token, response.data.user.name, response.data.user.email)
+                        this.closeSignupLoginForm();
+                        this.showSnackBar();
+                        this.setUserState(response.data.user.name, response.data.user.email);
+                    }
                 }
-            }
 
-            const errorHandler = error => {
-                console.log(error.data);
-            }
+                const errorHandler = error => {
+                    const snackBarData = {
+                        textMessage : '',
+                        timeOut : 10000,
+                        color : 'error'
+                    }
 
-            const data = {
-                email : this.userDetails.email,
-                password : this.userDetails.password,
-            }
-            
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
-            }
+                    if(error.status !== 500)
+                        snackBarData.textMessage = 'Invalid Credentials'
+                    else
+                        snackBarData.textMessage = `Something went wrong internally. Error code ${error.status}`
+                    this.$store.dispatch('snackBar/setSnackBar', snackBarData);
+                }
 
-            this.requestPOST(
-                API_URLS.login,
-                data,
-                headers,
-                successHandler,
-                errorHandler
-            )
+                const data = {
+                    email : this.userDetails.email,
+                    password : this.userDetails.password,
+                }
+                
+                const headers = {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
+                }
+
+                this.requestPOST(
+                    API_URLS.login,
+                    data,
+                    headers,
+                    successHandler,
+                    errorHandler
+                )
+            }
         },
 
         // SET USER STATE IN STORE

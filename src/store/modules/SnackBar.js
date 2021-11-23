@@ -25,7 +25,6 @@ const mutations = {
 
 const actions = {
     setSnackBar({commit}, data) {
-        console.log('I am here', data);
         commit('SHOW_MESSAGE', data);
     }
 }

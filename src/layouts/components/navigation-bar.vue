@@ -18,8 +18,8 @@
                     temporary
                     v-model="drawer">
                         <div class="avatar__email text-center pt-3">
-                            <v-avatar color="black"> YB </v-avatar>
-                                <p class="my-1">yuvantbesre@yahoo.com</p>
+                            <v-avatar color="black"> {{ initials }} </v-avatar>
+                                <p class="my-1"> {{ user.email }} </p>
                                 <hr class="white-text">
                         </div>
 
@@ -51,13 +51,13 @@
                             class="text-right"
                             v-bind="attrs"
                             v-on="on">
-                        Hi Yuvant 
+                        Hi {{ firstName }} 
                         <v-icon color="white">mdi-chevron-down</v-icon>
                         </button>
                     </template>
                     <div class="--grey-theme text-center menu-items">
-                        <v-avatar color="black"> YB </v-avatar>
-                        <p class="my-1">yuvantbesre@yahoo.com</p>
+                        <v-avatar color="black"> {{ initials }} </v-avatar>
+                        <p class="my-1"> {{ user.email }} </p>
                         <hr class="white-text">
                         <v-list-item link class="white--text" style="justify-content : center;" @click="logoutUser">
                             Logout
@@ -84,13 +84,27 @@ export default {
     },
 
     computed : {
-        isUserLoggedIn() {
-            return this.$store.getters['mainStore/GET_USER_DETAILS'].isLoggedIn;
-        }
+        user() {
+            return this.$store.getters['mainStore/GET_USER_DETAILS'];
+        },
+
+        firstName() {
+            return this.user.name.split(" ")[0];
+        },
+
+        initials() {
+            var names = this.user.name.split(' '),
+            initials = names[0].substring(0, 1).toUpperCase();
+            
+            if (names.length > 1) {
+                initials += names[names.length - 1].substring(0, 1).toUpperCase();
+            }
+            return initials;
+        },
     },
 
     watch : {
-        isUserLoggedIn : function(value) {
+        'user.isLoggedIn' : function(value) {
             if(value) {
                 this.buttonString = '+ Create Post';
                 this.showMenu = true;

@@ -21,3 +21,9 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.v-messages__message {
+    color: red !important;
+}
+</style>

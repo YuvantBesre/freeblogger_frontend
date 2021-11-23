@@ -4,7 +4,6 @@ import accessToken from '../helpers/access-token'
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.baseURL = 'https://dummy-api.handysolver.com/'
-axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken.getAccessToken()}`;
 
 export default {
     methods : {
@@ -27,9 +26,7 @@ export default {
         // AXIOS POST REQUEST
         requestPOST(url, params, headers, successResponse = null, errorResponse = null) {
             axios.post(
-                url,
-                params,
-                headers
+                url, params, { headers : headers }
             ).then(response => {
                 if(successResponse)
                     successResponse(response);
@@ -42,9 +39,7 @@ export default {
         // AXIOS PUT REQUEST
         requestPUT(url, params, headers, successResponse = null, errorResponse = null) {
             axios.put(
-                url,
-                params,
-                headers
+                url, params, { headers : headers }
             ).then(response => {
                 if(successResponse)
                     successResponse(response);
@@ -57,9 +52,7 @@ export default {
         // AXIOS PATCH REQUEST
         requestPATCH(url, params, headers, successResponse = null, errorResponse = null) {
             axios.patch(
-                url,
-                params,
-                headers
+                url, params, { headers : headers }
             ).then(response => {
                 if(successResponse)
                     successResponse(response);
@@ -72,9 +65,7 @@ export default {
         // AXIOS DELETE REQUEST
         requestDELETE(url, params, headers, successResponse = null, errorResponse = null) {
             axios.delete(
-                url,
-                params,
-                headers
+                url, { headers : headers }, 
             ).then(response => {
                 if(successResponse)
                     successResponse(response);

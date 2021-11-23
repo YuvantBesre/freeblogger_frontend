@@ -26,6 +26,7 @@
 import API_URL from "../../helpers/api-urls";
 import blogCard from "./components/blog-card.vue";
 import { eventBus } from '../../main';
+import accessToken from '../../helpers/access-token';
 export default {
     name : 'homepage',
 

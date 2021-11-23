@@ -27,6 +27,7 @@
 
 <script>
 import { VueEditor } from "vue2-editor";
+import accessToken from '../../../helpers/access-token';
 import API_URLS from '../../../helpers/api-urls';
 export default {
     name : 'addComment',
@@ -68,10 +69,14 @@ export default {
                 body : this.comment
             }
 
+            const headers = {
+                'Authorization' : `Bearer ${accessToken.getAccessToken()}`
+            }
+
             this.requestPOST(
                 API_URLS.comments,
                 data,
-                {},
+                headers,
                 successHandler,
                 errorHandler
             )

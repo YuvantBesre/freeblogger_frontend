@@ -62,6 +62,7 @@
 import API_URLS from '../../helpers/api-urls';
 import addComment from './components/add-comment.vue';
 import _ from 'lodash';
+import accessToken from '../../helpers/access-token';
 export default {
     name : 'postDetails',
 
@@ -104,7 +105,12 @@ export default {
             }
 
             const errorHandler = error => {
-                console.log(error);
+                const snackBarData = {
+                    textMessage : `Something went wrong! Error Code ${error.status}`,
+                    color : 'error',
+                    timeOut : 10000
+                }
+                this.$store.dispatch('snackBar/setSnackBar', snackBarData);
             }
 
             this.requestGET(
@@ -126,7 +132,12 @@ export default {
             }
 
             const errorHandler = error => {
-                console.log(error);
+                const snackBarData = {
+                    textMessage : `Something went wrong! Error Code ${error.status}`,
+                    color : 'error',
+                    timeOut : 10000
+                }
+                this.$store.dispatch('snackBar/setSnackBar', snackBarData);
             }
 
             this.requestGET(
@@ -141,7 +152,13 @@ export default {
         deleteBlogPost() {
             const successHandler = response => {
                 if(response.status === 200) {
-                    this.$router.replace({ name : 'home' })
+                    this.$router.replace({ name : 'home' });
+                    const snackBarData = {
+                        textMessage : 'Blog Post deleted successfully!',
+                        color : 'success',
+                        timeOut : 5000
+                    }
+                    this.$store.dispatch('snackBar/setSnackBar', snackBarData);
                 }
             }
 
@@ -149,10 +166,14 @@ export default {
                 console.log(error);
             }
 
+            const headers = {
+                'Authorization' : `Bearer ${accessToken.getAccessToken()}`
+            }
+
             this.requestDELETE(
                 `${API_URLS.posts}/${this.$route.params.id}`,
                 {},
-                {},
+                headers,
                 successHandler,
                 errorHandler
             )
@@ -161,7 +182,7 @@ export default {
         deleteComment(ID) {
             const successHandler = response => {
                 if(response.status === 200) {
-                    console.log(response.data);
+                    this.getCommentList();
                 }
             }
 
@@ -169,10 +190,14 @@ export default {
                 console.log(error);
             }
 
+            const headers = {
+                'Authorization' : `Bearer ${accessToken.getAccessToken()}`
+            }
+
             this.requestDELETE(
                 `${API_URLS.comments}/${ID}`,
                 {},
-                {},
+                headers,
                 successHandler,
                 errorHandler
             )
