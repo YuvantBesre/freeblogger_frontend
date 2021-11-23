@@ -11,6 +11,7 @@
                     <div class="form-body" @submit.prevent>
                         <label> Title </label>
                         <v-text-field 
+                            :disabled="loader"
                             :rules="[rules.required, rules.validContent(title, 10)]"
                             outlined 
                             v-model="title"
@@ -18,14 +19,18 @@
                             placeholder="Your title here" />
 
                         <label> Body </label>
-                        <vue-editor style="background-color : white; color : black;" v-model="body"></vue-editor>
+                        <vue-editor style="background-color : white; color : black;" v-model="body" :disabled="loader"></vue-editor>
+                        <small class="bold white--text">Note : The body must be at least 50 characters</small>
                     </div>
 
                     <div class="footer flex">
                         <button 
                             class="white--text bold submit-button"
                             type="submit"
-                            @click.prevent="createPost">Submit</button>
+                            @click.prevent="createPost">
+                            Submit
+                            <v-progress-circular v-if="loader" indeterminate color="white" size="10" width="2"/>
+                        </button>
                     </div>
                 </v-form>
             </div>
@@ -47,7 +52,8 @@ export default {
             dialog : false,
             title : '',
             body : '',
-            rules : rules
+            rules : rules,
+            loader : false
         }
     },
 
@@ -66,6 +72,7 @@ export default {
 
         createPost() {
             if(this.$refs.createBlogRef.validate()) {
+                this.loader = true;
                 const successHandler = response => {
                     if(response.status === 201) {
                         eventBus.$emit('refreshPostList');
@@ -76,6 +83,8 @@ export default {
                             timeOut : 5000
                         }
                         this.$store.dispatch('snackBar/setSnackBar', snackbarData);
+                        this.loader = false;
+                        this.$refs.createBlogRef.reset();
                     }
                 }
 
@@ -86,6 +95,7 @@ export default {
                         timeOut : 10000
                     }
                     this.$store.dispatch('snackBar/setSnackBar', snackbarData);
+                    this.loader = false;
                 }
 
                 const data = {

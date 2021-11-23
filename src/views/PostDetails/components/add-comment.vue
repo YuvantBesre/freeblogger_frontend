@@ -10,14 +10,18 @@
                 <v-form>
                     <div class="form-body" @submit.prevent>
                         <label> Comment </label>
-                        <vue-editor style="background-color : white; color : black;" v-model="comment"></vue-editor>
+                        <vue-editor style="background-color : white; color : black;" v-model="comment" :disabled="loader"></vue-editor>
                     </div>
 
                     <div class="footer flex">
                         <button 
+                            :disabled="comment.length === 0"
                             class="white--text bold submit-button"
                             type="submit"
-                            @click.prevent="addComment"> + Add </button>
+                            @click.prevent="addComment"> 
+                            + Add
+                            <v-progress-circular v-if="loader" indeterminate color="white" size="10" width="2"/>
+                        </button>
                     </div>
                 </v-form>
             </div>
@@ -34,7 +38,8 @@ export default {
 
     data() {
         return {
-            comment : ''
+            comment : '',
+            loader : false
         }
     },
 
@@ -54,14 +59,17 @@ export default {
 
     methods : {
         addComment() {
+            this.loader = true;
             const successHandler = response => {
                 if(response.status === 201) {
                     this.$emit('refreshCommentList');
+                    this.loader = false;
                 }
             }
 
             const errorHandler = error => {
                 console.log(error);
+                this.loader = true;
             }
 
             const data = {
@@ -88,3 +96,10 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+
+button:disabled {
+    opacity: 0.5;
+}
+</style>

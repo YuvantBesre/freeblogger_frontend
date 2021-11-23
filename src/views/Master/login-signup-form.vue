@@ -13,6 +13,7 @@
 
                             <label class="white-text"> Email </label>
                             <v-text-field 
+                                :disabled="loginLoader"
                                 :rules="[rules.required, rules.validEmail]"
                                 placeholder="E.g. abc@xyz.co.in"
                                 outlined 
@@ -23,6 +24,7 @@
 
                             <label class="white-text"> Password </label>
                             <v-text-field 
+                                :disabled="loginLoader"
                                 :rules="[rules.required]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
@@ -33,14 +35,17 @@
                                 :type="!showPassword ? 'password' : 'text' "
                                 background-color="white"/>
                             
-                            <small class="white-text cursor bold" @click="showLogin = false">
+                            <small class="white-text cursor bold" @click="showLogin = false" v-if="!loginLoader">
                                 Not a member? Signup here 
                                 <v-icon small color="white">mdi-arrow-right</v-icon>
                             </small>
                         </div>
 
                         <div class="footer flex">
-                            <button class="white-text submit-button" @click="loginUser">Login</button>
+                            <button class="white-text submit-button" @click="loginUser">
+                                Login
+                                <v-progress-circular v-if="loginLoader" indeterminate color="white" size="10" width="2"/>
+                            </button>
                         </div>
                     </v-form>
                 </div>
@@ -63,6 +68,7 @@
                         <div class="form-body">
                             <label class="white-text"> Name </label>
                             <v-text-field 
+                                :disabled="signupLoader"
                                 :rules="[rules.required]"
                                 placeholder="E.g. Neha Kumari"
                                 outlined 
@@ -73,6 +79,7 @@
 
                             <label class="white-text"> Email </label>
                             <v-text-field 
+                                :disabled="signupLoader"
                                 :rules="[rules.required, rules.validEmail]"
                                 placeholder="E.g. abc@xyz.co.in"
                                 outlined 
@@ -83,6 +90,7 @@
 
                             <label class="white-text"> Password </label>
                             <v-text-field 
+                                :disabled="signupLoader"
                                 :rules="[rules.required, rules.validPassword]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
@@ -95,6 +103,7 @@
 
                             <label class="white-text"> Confirm Password </label>
                             <v-text-field 
+                                :disabled="signupLoader"
                                 :rules="[rules.required, rules.validPassword]"
                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                 @click:append="showPassword = !showPassword"
@@ -110,7 +119,10 @@
                             <button 
                                 class="white--text bold submit-button"
                                 type="submit"
-                                @click.prevent="signupUser">Signup</button>
+                                @click.prevent="signupUser">
+                                    Signup
+                                    <v-progress-circular v-if="signupLoader" indeterminate color="white" size="10" width="2"/>
+                            </button>
                         </div>
                     </v-form>
                 </div>
@@ -139,7 +151,8 @@ export default {
                 confirmedPassword : null
             },
             rules : rules,
-            appliedRules : [],
+            loginLoader : false,
+            signupLoader : false
         }
     },
 
@@ -164,54 +177,64 @@ export default {
 
         // SIGNUP A USER
         signupUser() {
-            const successHandler = response => {
-                if(response.status === 201) {
-                    accessToken.setCredentials(response.data.token, response.data.user.name, response.data.user.email)
-                    this.closeSignupLoginForm();
-                    this.showSnackBar();
-                    this.setUserState(response.data.user.name, response.data.user.email);
+            if(this.$refs.signupFormRef.validate()) {
+                this.signupLoader = true;
+                const successHandler = response => {
+                    if(response.status === 201) {
+                        accessToken.setCredentials(response.data.token, response.data.user.name, response.data.user.email)
+                        this.closeSignupLoginForm();
+                        this.showSnackBar();
+                        this.setUserState(response.data.user.name, response.data.user.email);
+                        this.signupLoader = false;
+                        this.$refs.signupFormRef.reset()
+                    }
                 }
-            }
 
-            const errorHandler = error => {
-                console.log(error.data);
-            }
+                const errorHandler = error => {
+                    console.log(error.data);
+                    this.signupLoader = false;
+                }
 
-            const data = {
-                name : this.userDetails.name,
-                email : this.userDetails.email,
-                password : this.userDetails.password,
-                confirm_password : this.userDetails.confirmedPassword
-            }
-            
-            const headers = {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
-            }
+                const data = {
+                    name : this.userDetails.name,
+                    email : this.userDetails.email,
+                    password : this.userDetails.password,
+                    confirm_password : this.userDetails.confirmedPassword
+                }
+                
+                const headers = {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
+                }
 
-            this.requestPOST(
-                API_URLS.signUp,
-                data,
-                headers,
-                successHandler,
-                errorHandler
-            )
+                this.requestPOST(
+                    API_URLS.signUp,
+                    data,
+                    headers,
+                    successHandler,
+                    errorHandler
+                )
+            }
         },
 
         // LOGIN A USER
         loginUser() {
             if(this.$refs.loginFormRef.validate()) {
+                this.loginLoader = true;
                 const successHandler = response => {
                     if(response.status === 200) {
                         accessToken.setCredentials(response.data.token, response.data.user.name, response.data.user.email)
                         this.closeSignupLoginForm();
                         this.showSnackBar();
                         this.setUserState(response.data.user.name, response.data.user.email);
+                        this.loginLoader = false;
+                        this.$refs.loginFormRef.reset();
                     }
                 }
 
                 const errorHandler = error => {
+                    this.loginLoader = false;
                     const snackBarData = {
                         textMessage : '',
                         timeOut : 10000,

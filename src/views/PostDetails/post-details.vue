@@ -1,5 +1,6 @@
 <template>
     <div class="post-details --align">
+        <v-progress-linear indeterminate color="white" v-if="deleteLoader"></v-progress-linear>
         <div class="--align" v-if="Object.keys(blogDetails).length === 0">
             <v-skeleton-loader
                 v-for="(i, index) in 3"
@@ -71,7 +72,8 @@ export default {
             blogDetails : {},
             comments : [],
             commentDialog : false,
-            loadingComments : true
+            loadingComments : true,
+            deleteLoader : false
         }
     },
 
@@ -150,6 +152,7 @@ export default {
         },
 
         deleteBlogPost() {
+            this.deleteLoader = true;
             const successHandler = response => {
                 if(response.status === 200) {
                     this.$router.replace({ name : 'home' });
@@ -159,11 +162,13 @@ export default {
                         timeOut : 5000
                     }
                     this.$store.dispatch('snackBar/setSnackBar', snackBarData);
+                    this.deleteLoader = false;
                 }
             }
 
             const errorHandler = error => {
                 console.log(error);
+                this.deleteLoader = false;
             }
 
             const headers = {
@@ -180,14 +185,17 @@ export default {
         },
 
         deleteComment(ID) {
+            this.deleteLoader = true;
             const successHandler = response => {
                 if(response.status === 200) {
                     this.getCommentList();
+                    this.deleteLoader = false;
                 }
             }
 
             const errorHandler = error => {
                 console.log(error);
+                this.deleteLoader = false;
             }
 
             const headers = {
