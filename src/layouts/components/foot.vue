@@ -24,7 +24,7 @@ export default {
                 },
                 {
                     icon : 'mdi-github',
-                    url : ''
+                    url : 'https://github.com/YuvantBesre/freeblogger_frontend'
                 }
             ]
         }
