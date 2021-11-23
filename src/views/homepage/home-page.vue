@@ -54,7 +54,7 @@ export default {
     },
 
     mounted() {
-        eventBus.$on('refreshPostList', () => this.getPostList());
+        eventBus.$on('refreshPostList', () => this.getPostList('append'));
     },
 
     methods : {

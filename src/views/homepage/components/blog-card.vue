@@ -3,10 +3,8 @@
         <h1> {{ item.title }} </h1>
         <p v-html="item.body">
         </p>
-        <button>
-            <router-link :to="{ name : 'postDetails', params : { id : item.id } }" class="see-more white--text">
-                See More 
-            </router-link>
+        <button @click="$router.push({ name : 'postDetails', params : { id : item.id } })">
+            See More 
         </button>
 
         <p class="my-2"> Posted by : {{ item.user.name }} </p>
