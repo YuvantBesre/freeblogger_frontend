@@ -27,6 +27,7 @@
                             link 
                             class="white--text mt-3 mx-2" 
                             style="border-radius : 6px; justify-content : center; background : black;"
+                            @click="checkAction('Create Post')"
                             >
                             + Create Post
                         </v-list-item>

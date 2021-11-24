@@ -1,6 +1,6 @@
 <template>
     <div class="add-comment">
-        <v-dialog v-model="dialog" persistent>
+        <v-dialog v-model="dialog" persistent content-class="content-dialog">
             <div class="dialog --grey-theme">
                 <div class="heading flex">
                     <h2 class="white-text">Add comment</h2>

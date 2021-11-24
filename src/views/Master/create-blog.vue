@@ -1,6 +1,6 @@
 <template>
     <div class="create-blog">
-        <v-dialog v-model="dialog" persistent>
+        <v-dialog v-model="dialog" persistent content-class="content-dialog">
             <div class="dialog --grey-theme">
                 <div class="heading flex">
                     <h2 class="white-text">Create Blog Post</h2>
@@ -19,7 +19,7 @@
                             placeholder="Your title here" />
 
                         <label> Body </label>
-                        <vue-editor style="background-color : white; color : black;" v-model="body" :disabled="loader"></vue-editor>
+                        <vue-editor style="background-color : white; color : black; width : 100%;" v-model="body" :disabled="loader"></vue-editor>
                         <small class="bold white--text">Note : The body must be at least 50 characters</small>
                     </div>
 
@@ -124,7 +124,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import url('./common/styles.css');
 
+.content-dialog.v-dialog {
+    width: 100%;
+}
+
+@media all and (min-width : 1200px) {
+    .content-dialog.v-dialog {
+        width: 60%;
+    }
+}
 </style>
